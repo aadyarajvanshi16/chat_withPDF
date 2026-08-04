@@ -110,7 +110,7 @@ with st.spinner("Building RAG Chain"):
 )
 
 # ================ GET USER INPUT ===============
-user question = st.text_area("Ask Question: ")
+user_question = st.text_area("Ask Question: ")
 if user_question:
   if st.button("Get Answer: "):
     with st.spinner("Wait..."):
