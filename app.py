@@ -34,10 +34,20 @@ if uploaded_file:
     data = uploaded_file.read()
     st.sidebar.pdf(data)
 
+if uploaded_file is not None:
+  save_dir = "pdf_files"
+  if not os.path.exists(save_dir):
+    os.makedirs(save_dir)
+
+file_path = os.path.join(save_dir, uploaded_file.name)
+with open(file_path, "wb") as f:
+  f.write(uploaded_file.getbuffer())
+st.write(file_path)
+
 # =============== STEP 4: LOAD RESOURCES ===============
 @st.cache_data
 def load_documents():
-  loader = PyPDFLoader(uploaded_file)
+  loader = PyPDFLoader(file_path)
   documents = loader.load()
   return documents
 
@@ -60,16 +70,16 @@ embeddings = load_embedding()
 chunks = get_splitted_chunks()
 
 @st.cache_data
-def create_vector_db():
+def create_vector_db(chunks, _embeddings):
   # To Build Vector DB
-  vectorstore = FAISS.from_documents(chunks, embeddings)
+  vectorstore = FAISS.from_documents(chunks, _embeddings)
   print("Vector store built")
   vectorstore.save_local("faiss_index")
   return vectorstore
 
 @st.cache_data
-def create_retriever(vectorstore, k_value):
-  retriever = vectorstore.as_retriever(search_kwargs = {"k": 3})
+def create_retriever(_vectorstore, k_value):
+  retriever = _vectorstore.as_retriever(search_kwargs = {"k": 3})
   return retriever
 
 vectorstore = create_vector_db(chunks, embeddings)
@@ -103,5 +113,5 @@ with st.spinner("Building RAG Chain"):
 user question = st.text_area("Ask Question: ")
 if user_question:
   if st.button("Get Answer: "):
-    answer = rag_chain.invoke(user_question)
-    st.markdown(answer)
+    with st.spinner("Wait..."):
+      st.write_stream(rag_chain.stream(user_question))
