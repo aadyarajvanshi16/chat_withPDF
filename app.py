@@ -28,7 +28,7 @@ else:
   st.sidebar.info("Give API key")
 
 # ============== STEP 3: LOAD PDF =================
-uploaded_file = st.sidebar.file_uploaded("Upload PDF file", type = ["pdf"])
+uploaded_file = st.sidebar.file_uploader("Upload PDF file", type = ["pdf"])
 if uploaded_file:
   with st.spinner("Reading PDF file"):
     data = uploaded_file.read()
