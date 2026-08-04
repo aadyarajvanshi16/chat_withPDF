@@ -66,7 +66,7 @@ def get_splitted_terms():
 
 # =============== STEP 5: GET AND LOAD DOCS =============
 documents = load_documents()
-embeddings = load_embedding()
+embeddings = load_embeddings()
 chunks = get_splitted_chunks()
 
 @st.cache_data
